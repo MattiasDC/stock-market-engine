@@ -3,7 +3,7 @@ from functools import cache
 import os
 from pydantic import AnyUrl, BaseSettings
 
-from stock_market_engine.common.logging import get_logger
+from utils.logging import get_logger
 
 logger = get_logger(__name__)
 

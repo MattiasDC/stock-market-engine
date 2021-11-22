@@ -3,16 +3,16 @@ import json
 import pandas as pd
 import unittest
 
-from stock_market_engine.api.engine import Engine, add_ticker, remove_ticker, add_detector, remove_detector
-from stock_market_engine.core import add_signal,\
-									 OHLC,\
-									 TickerOHLC,\
-									 Ticker,\
-									 Signal,\
-									 SignalDetector,\
-									 StockMarket,\
-									 StockUpdater
-from stock_market_engine.common.factory import Factory
+from stock_market_engine.engine import Engine, add_ticker, remove_ticker, add_detector, remove_detector
+from stock_market.common.factory import Factory
+from stock_market.core import add_signal,\
+							  OHLC,\
+							  TickerOHLC,\
+							  Ticker,\
+							  Signal,\
+							  SignalDetector,\
+							  StockMarket,\
+							  StockUpdater
 
 class DummyStockMarketUpdater(StockUpdater):
 	def __init__(self):

@@ -1,5 +1,6 @@
 import uuid
-from .common import get_engine, store_engine, get_redis
+
+from stock_market_engine.common import get_engine, store_engine, get_redis
 
 def register_signal_api(app):
 	@app.get("/getsupportedsignaldetectors")

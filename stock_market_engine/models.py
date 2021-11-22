@@ -4,10 +4,11 @@ import json
 from pydantic import BaseModel, Json, constr
 from typing import List
 
-from stock_market_engine.api.config import get_settings
-from stock_market_engine.api.engine import Engine
-from stock_market_engine.core import StockMarket
-from stock_market_engine.core import Ticker
+from stock_market.core import StockMarket
+from stock_market.core import Ticker
+
+from .config import get_settings
+from .engine import Engine
 
 class TickerModel(BaseModel):
 	symbol : constr(max_length=get_settings().max_ticker_symbol_length)

@@ -1,10 +1,10 @@
 import uuid
 
 from .config import get_settings
-from stock_market_engine.api.engine import Engine
-from stock_market_engine.common.factory import Factory
-from stock_market_engine.ext.signal import register_signal_detector_factories 
-from stock_market_engine.ext.updater import register_stock_updater_factories 
+from .engine import Engine
+from stock_market.common.factory import Factory
+from stock_market.ext.signal import register_signal_detector_factories 
+from stock_market.ext.updater import register_stock_updater_factories 
 
 def get_redis(app):
 	return app.state.redis

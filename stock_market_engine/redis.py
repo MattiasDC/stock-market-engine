@@ -1,6 +1,8 @@
 from aioredis import Redis, from_url
+
+from utils.logging import get_logger
+
 from .config import Settings
-from stock_market_engine.common.logging import get_logger
 
 logger = get_logger(__name__)
 global_settings = Settings()
