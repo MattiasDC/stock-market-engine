@@ -21,7 +21,8 @@ class Engine:
 	def update(self, date):
 		current_end = self.stock_market.date
 		self.__stock_market = self.stock_market_updater.update(date, self.stock_market)
-		for date in pd.date_range(current_end + dt.timedelta(days=1), date + dt.timedelta(days=1)):
+
+		for date in pd.date_range(current_end, date + dt.timedelta(days=1)):
 			for detector in self.signal_detectors:
 				self.__signals = detector.detect(date.date(), self.stock_market, self.signals)
 
