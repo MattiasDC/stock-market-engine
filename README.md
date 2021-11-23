@@ -8,6 +8,8 @@ It's build on top of the [stock-market-lib](https://bitbucket.org/MattiasDC/stoc
 Use [docker](https://www.docker.com/) to install docker and then build stock-market-engine.
 
 ```bash
+git clone https://bitbucket.org/MattiasDC/stock-market-engine.git
+cd stock-market-engine
 docker-compose -f docker-compose-dev.yml build
 docker-compose -f docker-compose-dev.yml up
 ```
