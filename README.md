@@ -1,29 +1,23 @@
-# README #
+# stock-market-engine
 
-This README would normally document whatever steps are necessary to get your application up and running.
+stock-market-engine is a Python microservice application that serves a REST API to create/query/update stock market information.
+It's build on top of the [stock-market-lib](https://bitbucket.org/MattiasDC/stock-market-lib.git) library.
 
-### What is this repository for? ###
+## Installation
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+Use [docker](https://www.docker.com/) to install docker and then build stock-market-engine.
 
-### How do I get set up? ###
+```bash
+docker-compose -f docker-compose-dev.yml build
+docker-compose -f docker-compose-dev.yml up
+```
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+Open a web browser at 0.0.0.0:/docs to inspect the REST API
 
-### Contribution guidelines ###
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-* Writing tests
-* Code review
-* Other guidelines
+Please make sure to update tests as appropriate.
 
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
