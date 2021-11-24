@@ -87,17 +87,17 @@ class TestEngine(unittest.TestCase):
 		engine = remove_ticker(self.engine, self.spy)
 		self.assertFalse(self.spy in engine.stock_market.tickers)
 
-	def test_add_detector(self):
+	def test_add_signal_detector(self):
 		detector = DummyMonthlySignalDetector()
 		engine = Engine(self.stock_market, self.stock_updater, [])
-		engine = add_detector(engine, detector)
+		engine = add_signal_detector(engine, detector)
 		self.assertTrue(detector in engine.signal_detectors)
 
-	def test_remove_detector(self):
+	def test_remove_signal_detector(self):
 		detector = DummyMonthlySignalDetector()
 		engine = Engine(self.stock_market, self.stock_updater, [])
-		engine = add_detector(engine, detector)
-		engine = remove_detector(engine, detector)
+		engine = add_signal_detector(engine, detector)
+		engine = remove_signal_detector(engine, detector)
 		self.assertFalse(detector in engine.signal_detectors)
 
 if __name__ == '__main__':

@@ -73,18 +73,21 @@ def remove_ticker(engine, ticker):
 				  engine.signal_detectors,
 				  engine.signals)
 
-def add_detector(engine, detector):
-	assert detector not in engine.signal_detectors
+def add_signal_detector(engine, detector):
+	if detector in engine.signal_detectors:
+		return None
+	if detector.id in [d.id for d in engine.signal_detectors]:
+		return None
 	detectors = engine.signal_detectors + [detector]
 	return Engine(engine.stock_market,
 		   		  engine.stock_market_updater,
 		   		  detectors,
 				  engine.signals)
 
-def remove_detector(engine, detector):
-	assert detector in engine.signal_detectors
-	detectors = engine.signal_detectors.copy()
-	detectors.remove(detector)
+def remove_signal_detector(engine, detector_id):
+	if detector_id not in [d.id for d in engine.signal_detectors]:
+		return None
+	detectors = [d for d in engine.signal_detectors if d.id != detector_id]
 	return Engine(engine.stock_market,
 		   		  engine.stock_market_updater,
 		   		  detectors,

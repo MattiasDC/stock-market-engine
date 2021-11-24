@@ -49,7 +49,7 @@ def register_stock_market_api(app):
 		engine = await get_engine(engine_id, redis)
 		ticker = Ticker(ticker_id)
 		if ticker in engine.stock_market.tickers:
-			return Response(status_code=HTTPStatus.NO_CONTENT.value)
+			return engine_id
 	
 		engine = eng.add_ticker(engine, ticker)
 		new_engine_id = str(uuid.uuid4())
@@ -62,7 +62,7 @@ def register_stock_market_api(app):
 		engine = await get_engine(engine_id, redis)
 		ticker = Ticker(ticker_id)
 		if ticker not in engine.stock_market.tickers:
-			return Response(status_code=HTTPStatus.NO_CONTENT.value)
+			return engine_id
 	
 		engine = eng.remove_ticker(engine, ticker)
 		new_engine_id = str(uuid.uuid4())

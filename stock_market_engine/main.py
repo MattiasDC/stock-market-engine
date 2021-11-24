@@ -3,8 +3,8 @@ from fastapi import FastAPI
 import uuid
 
 from .common import get_signal_detector_factory, get_stock_updater_factory, store_engine, get_redis, get_engine
-from .models import EngineModel
 from .redis import init_redis_pool
+from .api.models import EngineModel
 from .api.stock_market import register_stock_market_api
 from .api.signal import register_signal_api
 
