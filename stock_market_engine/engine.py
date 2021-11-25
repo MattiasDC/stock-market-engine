@@ -2,7 +2,7 @@ import datetime as dt
 import json
 import pandas as pd
 
-from stock_market.core import SignalSequence, merge_signals
+from stock_market.core import SignalSequence
 from stock_market.core import StockMarket
 
 class Engine:
@@ -24,7 +24,7 @@ class Engine:
 
 		for date in pd.date_range(current_end, date + dt.timedelta(days=1)):
 			for detector in self.signal_detectors:
-				self.__signals = merge_signals(self.signals, detector.detect(date.date(), self.stock_market))
+				self.__signals = detector.detect(date.date(), self.stock_market, self.signals)
 
 	@property
 	def stock_market_updater(self):
