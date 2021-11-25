@@ -3,7 +3,7 @@ import json
 import pandas as pd
 import unittest
 
-from stock_market_engine.engine import Engine, add_ticker, remove_ticker, add_detector, remove_detector
+from stock_market_engine.engine import Engine, add_ticker, remove_ticker, add_signal_detector, remove_signal_detector
 from stock_market.common.factory import Factory
 from stock_market.core import add_signal,\
 							  OHLC,\
@@ -11,6 +11,7 @@ from stock_market.core import add_signal,\
 							  Ticker,\
 							  Signal,\
 							  SignalDetector,\
+							  SignalSequence,\
 							  StockMarket,\
 							  StockUpdater
 
@@ -30,11 +31,16 @@ class DummyStockMarketUpdater(StockUpdater):
 	def from_json(json_str):
 		return DummyStockMarketUpdater()
 
+	@staticmethod
+	def json_schema():
+		return {}
+
 class DummyMonthlySignalDetector(SignalDetector):
 	def __init__(self):
 		super().__init__(1, "DummyDetector")
 
-	def detect(self, date, stock_market, sequence):
+	def detect(self, date, stock_market):
+		sequence = SignalSequence()
 		if date.day == 1:
 			sequence = add_signal(sequence, Signal(self.id, self.name, date))
 		return sequence
@@ -51,6 +57,10 @@ class DummyMonthlySignalDetector(SignalDetector):
 	@staticmethod
 	def from_json(json_str):
 		return DummyMonthlySignalDetector()
+
+	@staticmethod
+	def json_schema():
+		return {}
 
 class TestEngine(unittest.TestCase):
 
@@ -72,8 +82,8 @@ class TestEngine(unittest.TestCase):
 
 	def test_json(self):
 		factory = Factory()
-		factory.register("DummyDetector", lambda _: DummyMonthlySignalDetector())
-		factory.register("DummyUpdater", lambda _: DummyStockMarketUpdater())
+		factory.register("DummyDetector", lambda _: DummyMonthlySignalDetector(), DummyMonthlySignalDetector.json_schema())
+		factory.register("DummyUpdater", lambda _: DummyStockMarketUpdater(), DummyStockMarketUpdater.json_schema())
 		from_json = Engine.from_json(self.engine.to_json(), factory, factory)
 		self.assertEqual(self.engine.stock_market, from_json.stock_market)
 		self.assertEqual(self.engine.signals, from_json.signals)
@@ -97,7 +107,7 @@ class TestEngine(unittest.TestCase):
 		detector = DummyMonthlySignalDetector()
 		engine = Engine(self.stock_market, self.stock_updater, [])
 		engine = add_signal_detector(engine, detector)
-		engine = remove_signal_detector(engine, detector)
+		engine = remove_signal_detector(engine, detector.id)
 		self.assertFalse(detector in engine.signal_detectors)
 
 if __name__ == '__main__':
