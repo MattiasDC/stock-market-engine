@@ -39,9 +39,10 @@ class DummyMonthlySignalDetector(SignalDetector):
 	def __init__(self):
 		super().__init__(1, "DummyDetector")
 
-	def detect(self, date, stock_market, sequence):
-		if date.day == 1:
-			sequence = add_signal(sequence, Signal(self.id, self.name, date))
+	def detect(self, from_date, to_date, stock_market, sequence):
+		for date in map(lambda d: d.date(), pd.date_range(from_date, to_date)):
+			if date.day == 1:
+				sequence = add_signal(sequence, Signal(self.id, self.name, date))
 		return sequence
 
 	def update(self, date, stock_market):
