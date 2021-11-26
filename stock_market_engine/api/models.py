@@ -30,18 +30,12 @@ class SignalDetectorModel(BaseModel):
 	def create(self, factory):
 		return factory.create(self.name, json.dumps(self.config))
 
-class SignalDetectorsModel(BaseModel):
-	signal_detectors: List[SignalDetectorModel]
-
-	def create(self, factory):
-		return [detector_config.create(factory) for detector_config in self.signal_detectors]
-
 class EngineModel(BaseModel):
 	stock_market: StockMarketModel
-	signal_detectors: SignalDetectorsModel
+	signal_detectors: List[SignalDetectorModel]
 
 	def create(self, stock_updater_factory, signal_detector_factory):
 		sm = self.stock_market.create()
-		signal_detectors = self.signal_detectors.create(signal_detector_factory)
+		signal_detectors = [detector_config.create(factory) for detector_config in self.signal_detectors]
 		stock_updater = stock_updater_factory.create(get_settings().stock_updater, "{}")
 		return Engine(sm, stock_updater, signal_detectors)

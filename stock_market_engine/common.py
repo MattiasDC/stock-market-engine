@@ -14,13 +14,6 @@ def get_signal_detector_factory():
 
 def get_stock_updater_factory():
 	return register_stock_updater_factories(Factory())
-	
-async def store_temporary(o, redis):
-	if o is None:
-		return None
-	random_id = str(uuid.uuid4())
-	await redis.set(random_id, o.to_json(), get_settings().redis_temporary_expiration_time)
-	return random_id
 
 async def store_engine(engine, engine_id, redis):
 	await redis.set(engine_id, engine.to_json(), get_settings().redis_engine_expiration_time)
