@@ -13,7 +13,8 @@ from stock_market.core import add_signal,\
 							  SignalDetector,\
 							  SignalSequence,\
 							  StockMarket,\
-							  StockUpdater
+							  StockUpdater,\
+							  Sentiment
 
 class DummyStockMarketUpdater(StockUpdater):
 	def __init__(self):
@@ -42,7 +43,7 @@ class DummyMonthlySignalDetector(SignalDetector):
 	def detect(self, from_date, to_date, stock_market, sequence):
 		for date in map(lambda d: d.date(), pd.date_range(from_date, to_date)):
 			if date.day == 1:
-				sequence = add_signal(sequence, Signal(self.id, self.name, date))
+				sequence = add_signal(sequence, Signal(self.id, self.name, Sentiment.NEUTRAL, date))
 		return sequence
 
 	def update(self, date, stock_market):
