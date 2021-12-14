@@ -29,8 +29,6 @@ def register_stock_market_api(app):
 		redis = get_redis(app)
 		engine = await get_engine(engine_id, redis)
 		ohlc = engine.stock_market.ohlc(Ticker(ticker_id))
-		if ohlc is None:
-			return
 		return ohlc.to_json()
 	
 	@app.get("/signals/{engine_id}")
