@@ -18,7 +18,7 @@ def register_signal_api(app):
 		signal_detectors = factory.get_registered_names()
 		return [{'detector_name' : sd, 'schema' : factory.get_schema(sd) } for sd in signal_detectors]
 
-	@app.get("/getsignaldetectors/{engine_id}")
+	@app.get("/signaldetectors/{engine_id}")
 	async def get_signal_detectors(engine_id : uuid.UUID):
 		redis = get_redis(app)
 		engine = await get_engine(engine_id, redis)
