@@ -61,3 +61,10 @@ def register_signal_api(app):
 		new_engine_id = str(uuid.uuid4())
 		await store_engine(engine, new_engine_id, redis)
 		return new_engine_id
+
+		
+	@app.get("/signals/{engine_id}")
+	async def get_signals_id(engine_id : uuid.UUID):
+		redis = get_redis(app)
+		engine = await get_engine(engine_id, redis)
+		return engine.signals.to_json()
