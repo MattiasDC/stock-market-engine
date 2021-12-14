@@ -36,6 +36,6 @@ class EngineModel(BaseModel):
 
 	def create(self, stock_updater_factory, signal_detector_factory):
 		sm = self.stock_market.create()
-		signal_detectors = [detector_config.create(factory) for detector_config in self.signal_detectors]
+		signal_detectors = [detector_config.create(signal_detector_factory) for detector_config in self.signal_detectors]
 		stock_updater = stock_updater_factory.create(get_settings().stock_updater, "\"\"")
 		return Engine(sm, stock_updater, signal_detectors)
