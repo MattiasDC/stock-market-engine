@@ -98,7 +98,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         new_engine_id = response.text.strip("\"")
 
-        response = client.get(f"/getsignaldetectors/{new_engine_id}")
+        response = client.get(f"/signaldetectors/{new_engine_id}")
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(len(response.json()), 1)
 
@@ -106,6 +106,6 @@ class TestApi(unittest.TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         new_engine_id = response.text.strip("\"")
         
-        response = client.get(f"/getsignaldetectors/{new_engine_id}")
+        response = client.get(f"/signaldetectors/{new_engine_id}")
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(len(response.json()), 0)

@@ -9,14 +9,11 @@ class Engine:
 	def __init__(self,
 				 stock_market,
 				 stock_market_updater,
-				 signal_detectors,
-				 signals = None):
+				 signal_detectors):
 		self.__stock_market = stock_market
 		self.__stock_market_updater = stock_market_updater
 		self.__signal_detectors = signal_detectors
-		self.__signals = signals
-		if self.__signals is None:
-			self.__signals = SignalSequence()
+		self.__signals = SignalSequence()
 		
 	def update(self, date):
 		current_end = self.stock_market.date
@@ -63,14 +60,12 @@ class Engine:
 def add_ticker(engine, ticker):
 	return Engine(engine.stock_market.add_ticker(ticker),
 				  engine.stock_market_updater,
-				  engine.signal_detectors,
-				  engine.signals)
+				  engine.signal_detectors)
 
 def remove_ticker(engine, ticker):
 	return Engine(engine.stock_market.remove_ticker(ticker),
 				  engine.stock_market_updater,
-				  engine.signal_detectors,
-				  engine.signals)
+				  engine.signal_detectors)
 
 def add_signal_detector(engine, detector):
 	if detector in engine.signal_detectors:
@@ -80,8 +75,7 @@ def add_signal_detector(engine, detector):
 	detectors = engine.signal_detectors + [detector]
 	return Engine(engine.stock_market,
 		   		  engine.stock_market_updater,
-		   		  detectors,
-				  engine.signals)
+		   		  detectors)
 
 def remove_signal_detector(engine, detector_id):
 	if detector_id not in [d.id for d in engine.signal_detectors]:
@@ -89,5 +83,4 @@ def remove_signal_detector(engine, detector_id):
 	detectors = [d for d in engine.signal_detectors if d.id != detector_id]
 	return Engine(engine.stock_market,
 		   		  engine.stock_market_updater,
-		   		  detectors,
-				  engine.signals)
+		   		  detectors)
