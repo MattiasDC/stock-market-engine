@@ -46,9 +46,6 @@ class DummyMonthlySignalDetector(SignalDetector):
 				sequence = add_signal(sequence, Signal(self.id, self.name, Sentiment.NEUTRAL, date))
 		return sequence
 
-	def update(self, date, stock_market):
-		pass
-
 	def __eq__(self, other):
 		return isinstance(other, DummyMonthlySignalDetector)
 
