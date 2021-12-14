@@ -82,9 +82,12 @@ class TestEngine(unittest.TestCase):
 		factory = Factory()
 		factory.register("DummyDetector", lambda _: DummyMonthlySignalDetector(), DummyMonthlySignalDetector.json_schema())
 		factory.register("DummyUpdater", lambda _: DummyStockMarketUpdater(), DummyStockMarketUpdater.json_schema())
+		date = datetime.date(2000, 5, 1)
+		self.engine.update(date)
 		from_json = Engine.from_json(self.engine.to_json(), factory, factory)
 		self.assertEqual(self.engine.stock_market, from_json.stock_market)
 		self.assertEqual(self.engine.signals, from_json.signals)
+		self.assertEqual(self.engine.signal_detectors, from_json.signal_detectors)
 
 	def test_add_ticker(self):
 		QQQ = Ticker("QQQ")

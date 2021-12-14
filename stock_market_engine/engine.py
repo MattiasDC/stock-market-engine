@@ -13,14 +13,14 @@ class Engine:
 		self.__stock_market = stock_market
 		self.__stock_market_updater = stock_market_updater
 		self.__signal_detectors = signal_detectors
-		self.__signals = [SignalSequence() for _ in range(len(self.__signal_detectors))]
+		self.__signal_sequences = [SignalSequence() for _ in range(len(self.__signal_detectors))]
 
 	def update(self, date):
-		current_end = self.stock_market.date
+		current_end = max([s.date for s in self.signals.signals] + [self.stock_market.date]) + dt.timedelta(days=1)
 		self.__stock_market = self.stock_market_updater.update(date, self.stock_market)
 
-		for i, (detector, signals) in enumerate(zip(self.signal_detectors, self.__signals)):
-			self.__signals[i] = detector.detect(current_end, date, self.stock_market, self.signals)
+		for i, (detector, signal_sequence) in enumerate(zip(self.signal_detectors, self.__signal_sequences)):
+			self.__signal_sequences[i] = detector.detect(current_end, date, self.stock_market, signal_sequence)
 
 	@property
 	def stock_market_updater(self):
@@ -36,7 +36,7 @@ class Engine:
 		
 	@property
 	def signals(self):
-		return merge_signals(*self.__signals)
+		return merge_signals(*self.__signal_sequences)
 
 	def to_json(self):
 		stock_market_updater_json = {"name": self.stock_market_updater.name,
@@ -44,7 +44,7 @@ class Engine:
 		signal_detectors_json = [{"name" : detector.name,
 					       		  "config": detector.to_json()} for detector in self.signal_detectors]
 		return json.dumps({"stock_market" : self.stock_market.to_json(),
-					       "signals" : [signal_sequence.to_json() for signal_sequence in self.__signals],
+					       "signal_sequences" : [signal_sequence.to_json() for signal_sequence in self.__signal_sequences],
 					       "stock_updater" : stock_market_updater_json,
 					       "signal_detectors" : signal_detectors_json})
 
@@ -54,7 +54,7 @@ class Engine:
 		engine = Engine(StockMarket.from_json(json_obj["stock_market"]),
 				 	    stock_updater_factory.create(json_obj["stock_updater"]["name"], json_obj["stock_updater"]["config"]),
 				        [signal_detector_factory.create(config["name"], config["config"]) for config in json_obj["signal_detectors"]])
-		engine.__signals = [SignalSequence.from_json(signal_sequence) for signal_sequence in json_obj["signals"]]
+		engine.__signal_sequences = [SignalSequence.from_json(signal_sequence) for signal_sequence in json_obj["signal_sequences"]]
 		return engine
 
 def add_ticker(engine, ticker):
