@@ -2,8 +2,8 @@ import datetime as dt
 import json
 import pandas as pd
 
-from stock_market.core import SignalSequence, merge_signals
-from stock_market.core import StockMarket
+from stock_market.core import SignalSequence, StockMarket, merge_signals
+
 
 class Engine:
 	def __init__(self,
@@ -73,12 +73,14 @@ def add_ticker(engine, ticker):
 				  engine.signal_sequences)
 
 def remove_ticker(engine, ticker):
-	return Engine(engine.stock_market.remove_ticker(ticker),
+	stock_market = engine.stock_market.remove_ticker(ticker)
+	return Engine(stock_market,
 				  engine.stock_market_updater,
-				  engine.signal_detectors,
-				  engine.signal_sequences)
+				  [sd for sd in engine.signal_detectors if sd.is_valid(stock_market)],
+				  [ss for i, ss in enumerate(engine.signal_sequences) if engine.signal_detectors[i].is_valid(stock_market)])
 
 def add_signal_detector(engine, detector):
+	assert detector.is_valid(engine.stock_market)
 	if detector in engine.signal_detectors:
 		return None
 	if detector.id in [d.id for d in engine.signal_detectors]:
