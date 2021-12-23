@@ -50,7 +50,7 @@ class Engine:
 	def to_json(self):
 		stock_market_updater_json = {"name": self.stock_market_updater.name,
 									 "config": self.stock_market_updater.to_json()}
-		signal_detectors_json = [{"name" : detector.name,
+		signal_detectors_json = [{"name" : detector.NAME(),
 					       		  "config": detector.to_json()} for detector in self.signal_detectors]
 		return json.dumps({"stock_market" : self.stock_market.to_json(),
 					       "signal_sequences" : [signal_sequence.to_json() for signal_sequence in self.signal_sequences],

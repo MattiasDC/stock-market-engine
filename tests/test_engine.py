@@ -63,6 +63,10 @@ class DummyMonthlySignalDetector(SignalDetector):
 	def json_schema():
 		return {}
 
+	@staticmethod
+	def NAME():
+		return "DummyDetector"
+
 class TestEngine(unittest.TestCase):
 
 	def setUp(self):
