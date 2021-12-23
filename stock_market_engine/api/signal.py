@@ -5,7 +5,7 @@ import uuid
 
 from stock_market_engine.common import get_engine, store_engine, get_redis
 import stock_market_engine.engine as eng
-from stock_market_engine.api.models import SignalDetectorModel
+from stock_market_engine.api.models import SignalDetectorModel, SignalDetectorWithNameModel
 
 from stock_market.common.factory import Factory
 from stock_market.ext.signal import register_signal_detector_factories
@@ -26,11 +26,11 @@ def register_signal_api(app):
 			return []
 
 		detectors = engine.signal_detectors
-		return [SignalDetectorModel(name=d.name, config=d.to_json()) for d in detectors]
+		return [SignalDetectorWithNameModel(static_name=d.NAME(), name=d.name, config=d.to_json()) for d in detectors]
 
 	@app.post("/addsignaldetector/{engine_id}")
 	async def add_signal_detector(engine_id : uuid.UUID, signal_detector : SignalDetectorModel):
-		if signal_detector.name not in factory.get_registered_names():
+		if signal_detector.static_name not in factory.get_registered_names():
 			return Response(status_code=HTTPStatus.NO_CONTENT.value)
 
 		redis = get_redis(app)
@@ -39,7 +39,7 @@ def register_signal_api(app):
 			return engine_id
 
 		detectors = engine.signal_detectors
-		engine = eng.add_signal_detector(engine, factory.create(signal_detector.name, json.dumps(signal_detector.config)))
+		engine = eng.add_signal_detector(engine, factory.create(signal_detector.static_name, json.dumps(signal_detector.config)))
 		if engine is None:
 			return engine_id
 

@@ -24,11 +24,16 @@ class StockMarketModel(BaseModel):
 		return StockMarket(self.start_date, [ticker.create() for ticker in self.tickers])
 
 class SignalDetectorModel(BaseModel):
-	name : str
+	static_name: str
 	config : Json
 
 	def create(self, factory):
-		return factory.create(self.name, json.dumps(self.config))
+		return factory.create(self.static_name, json.dumps(self.config))
+
+class SignalDetectorWithNameModel(BaseModel):
+	static_name: str
+	name : str
+	config : Json
 
 class EngineModel(BaseModel):
 	stock_market: StockMarketModel

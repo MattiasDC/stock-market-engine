@@ -93,7 +93,7 @@ class TestApi(unittest.TestCase):
 
         signal_detector = "Monthly"
         detector_id = 1
-        response = client.post(f"/addsignaldetector/{engine_id}", json={"name" : signal_detector,
+        response = client.post(f"/addsignaldetector/{engine_id}", json={"static_name" : signal_detector,
         																"config" : json.dumps(detector_id)})
         self.assertEqual(response.status_code, HTTPStatus.OK)
         new_engine_id = response.text.strip("\"")
