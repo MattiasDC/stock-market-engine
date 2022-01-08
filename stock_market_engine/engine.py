@@ -80,7 +80,7 @@ def remove_ticker(engine, ticker):
 				  [ss for i, ss in enumerate(engine.signal_sequences) if engine.signal_detectors[i].is_valid(stock_market)])
 
 def add_signal_detector(engine, detector):
-	assert detector.is_valid(engine.stock_market)
+	assert detector.is_valid(engine.stock_market), (detector, engine.stock_market)
 	if detector in engine.signal_detectors:
 		return None
 	if detector.id in [d.id for d in engine.signal_detectors]:

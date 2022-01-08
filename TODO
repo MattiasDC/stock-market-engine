@@ -1,2 +1,3 @@
+- Make Engine immutable (new engine on update)
 - Have an updater which uses database backed data (sqlite?) -> not available -> query yahoo
 - Make a separate service for getting ohlc (which uses the backed data)
