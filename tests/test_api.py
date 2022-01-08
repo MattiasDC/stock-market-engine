@@ -109,3 +109,7 @@ class TestApi(unittest.TestCase):
         response = client.get(f"/signaldetectors/{new_engine_id}")
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(len(response.json()), 0)
+
+        response = client.get(f"/getsupportedindicators")
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(len(response.json()), 3)

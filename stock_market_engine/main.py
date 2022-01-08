@@ -4,6 +4,7 @@ import uuid
 
 from .common import get_signal_detector_factory, get_stock_updater_factory, store_engine, get_redis, get_engine
 from .redis import init_redis_pool
+from .api.indicator import register_indicator_api
 from .api.models import EngineModel
 from .api.stock_market import register_stock_market_api
 from .api.signal import register_signal_api
@@ -30,3 +31,4 @@ async def update_engine(engine_id : uuid.UUID, date : datetime.date):
 
 register_stock_market_api(app)
 register_signal_api(app)
+register_indicator_api(app)
