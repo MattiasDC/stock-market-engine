@@ -21,9 +21,10 @@ class DummyStockMarketUpdater(StockUpdater):
 		super().__init__("DummyUpdater")
 
 	def update(self, date, stock_market):
-		 ohlc = OHLC(pd.Series([date]), pd.Series([1]), pd.Series([2]), pd.Series([3]), pd.Series([4]))
-		 stock_market = stock_market.update_ticker(TickerOHLC(Ticker('SPY'), ohlc))
-		 return stock_market
+		ohlc = OHLC(pd.Series([date]), pd.Series([1]), pd.Series([2]), pd.Series([3]), pd.Series([4]))
+		if Ticker('SPY') in stock_market.tickers:
+		    stock_market = stock_market.update_ticker(TickerOHLC(Ticker('SPY'), ohlc))
+		return stock_market
 
 	def to_json(self):
 		return json.dumps({})
