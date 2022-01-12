@@ -37,8 +37,11 @@ async def create_engine(engine_config: EngineModel):
 @app.post("/update/{engine_id}")
 async def update_engine(engine_id: uuid.UUID, date: datetime.date):
     engine = await get_engine(engine_id, get_redis(app))
-    engine.update(date)
-    await store_engine(engine, str(engine_id), get_redis(app))
+
+    new_engine = engine.update(date)
+    random_id = str(uuid.uuid4())
+    await store_engine(new_engine, random_id, get_redis(app))
+    return random_id
 
 
 register_stock_market_api(app)

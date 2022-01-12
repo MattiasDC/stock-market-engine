@@ -47,6 +47,7 @@ class TestApi(unittest.TestCase):
 
         response = client.post(f"/update/{engine_id}", params={"date": "2021-01-04"})
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        engine_id = response.json()
         self.assertEqual(self.get_date(client, engine_id), "2021-01-04")
 
         response = client.get(f"/getstartdate/{engine_id}")

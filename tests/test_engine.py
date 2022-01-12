@@ -98,7 +98,7 @@ class TestEngine(unittest.TestCase):
 
     def test_update(self):
         date = datetime.date(2000, 5, 1)
-        self.engine.update(date)
+        self.engine = self.engine.update(date)
         self.assertEqual(date, self.engine.stock_market.date)
         self.assertEqual(3, len(self.engine.signals.signals))
         last_spy_time_value = self.engine.stock_market.ohlc(

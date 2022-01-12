@@ -11,6 +11,7 @@ class Engine:
         stock_market_updater,
         signal_detectors,
         signal_sequences=None,
+        date=None,
     ):
         self.__stock_market = stock_market
         self.__stock_market_updater = stock_market_updater
@@ -20,19 +21,33 @@ class Engine:
             self.__signal_sequences = [
                 SignalSequence() for _ in range(len(self.__signal_detectors))
             ]
+        self.__date = stock_market.date if date is None else date
 
     def update(self, date):
-        self.__stock_market = self.stock_market_updater.update(date, self.stock_market)
+        new_stock_market = self.stock_market_updater.update(date, self.stock_market)
+        signal_sequences = []
 
-        for i, (detector, signal_sequence) in enumerate(
-            zip(self.signal_detectors, self.signal_sequences)
+        for detector, signal_sequence in zip(
+            self.signal_detectors, self.signal_sequences
         ):
-            from_date = self.stock_market.start_date
+            from_date = new_stock_market.start_date
             if signal_sequence.signals:
                 from_date = signal_sequence.signals[-1].date + dt.timedelta(days=1)
-            self.signal_sequences[i] = detector.detect(
-                from_date, date, self.stock_market, signal_sequence
+            signal_sequences.append(
+                detector.detect(from_date, date, new_stock_market, signal_sequence)
             )
+
+        return Engine(
+            new_stock_market,
+            self.stock_market_updater,
+            self.signal_detectors,
+            signal_sequences,
+            date,
+        )
+
+    @property
+    def date(self):
+        return self.__date
 
     @property
     def stock_market_updater(self):
@@ -102,7 +117,7 @@ def add_ticker(engine, ticker):
         engine.signal_detectors,
         engine.signal_sequences,
     )
-    new_engine.update(engine.stock_market.date)
+    new_engine = new_engine.update(engine.date)
     return new_engine
 
 
@@ -118,7 +133,7 @@ def remove_ticker(engine, ticker):
             if engine.signal_detectors[i].is_valid(stock_market)
         ],
     )
-    new_engine.update(engine.stock_market.date)
+    new_engine = new_engine.update(engine.date)
     return new_engine
 
 
@@ -135,7 +150,7 @@ def add_signal_detector(engine, detector):
         detectors,
         engine.signal_sequences + [SignalSequence()],
     )
-    new_engine.update(engine.stock_market.date)
+    new_engine = new_engine.update(engine.date)
     return new_engine
 
 
@@ -151,5 +166,5 @@ def remove_signal_detector(engine, detector_id):
     new_engine = Engine(
         engine.stock_market, engine.stock_market_updater, detectors, sequences
     )
-    new_engine.update(engine.stock_market.date)
+    new_engine = new_engine.update(engine.date)
     return new_engine
