@@ -10,7 +10,7 @@ def register_stock_market_api(app):
     @app.get("/getdate/{engine_id}")
     async def get_date(engine_id: uuid.UUID):
         engine = await get_engine(engine_id, get_redis(app))
-        return engine.stock_market.date
+        return engine.date
 
     @app.get("/getstartdate/{engine_id}")
     async def get_start_date(engine_id: uuid.UUID):
