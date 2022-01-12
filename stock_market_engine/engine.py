@@ -103,12 +103,12 @@ class Engine:
                 signal_detector_factory.create(config["name"], config["config"])
                 for config in json_obj["signal_detectors"]
             ],
-            json.loads(json_obj["date"]),
+            [
+                SignalSequence.from_json(signal_sequence)
+                for signal_sequence in json_obj["signal_sequences"]
+            ],
+            dt.date.fromisoformat(json.loads(json_obj["date"])),
         )
-        engine.__signal_sequences = [
-            SignalSequence.from_json(signal_sequence)
-            for signal_sequence in json_obj["signal_sequences"]
-        ]
         return engine
 
 
@@ -135,6 +135,7 @@ def remove_ticker(engine, ticker):
             for i, ss in enumerate(engine.signal_sequences)
             if engine.signal_detectors[i].is_valid(stock_market)
         ],
+        engine.date,
     )
     new_engine = new_engine.update(engine.date)
     return new_engine
