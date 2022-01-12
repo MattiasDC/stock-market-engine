@@ -87,6 +87,7 @@ class Engine:
                 ],
                 "stock_updater": stock_market_updater_json,
                 "signal_detectors": signal_detectors_json,
+                "date": json.dumps(self.date, default=dt.date.isoformat),
             }
         )
 
@@ -102,6 +103,7 @@ class Engine:
                 signal_detector_factory.create(config["name"], config["config"])
                 for config in json_obj["signal_detectors"]
             ],
+            json.loads(json_obj["date"]),
         )
         engine.__signal_sequences = [
             SignalSequence.from_json(signal_sequence)
@@ -116,6 +118,7 @@ def add_ticker(engine, ticker):
         engine.stock_market_updater,
         engine.signal_detectors,
         engine.signal_sequences,
+        engine.date,
     )
     new_engine = new_engine.update(engine.date)
     return new_engine
@@ -149,6 +152,7 @@ def add_signal_detector(engine, detector):
         engine.stock_market_updater,
         detectors,
         engine.signal_sequences + [SignalSequence()],
+        engine.date,
     )
     new_engine = new_engine.update(engine.date)
     return new_engine
@@ -164,7 +168,11 @@ def remove_signal_detector(engine, detector_id):
     sequences = engine.signal_sequences.copy()
     del sequences[i]
     new_engine = Engine(
-        engine.stock_market, engine.stock_market_updater, detectors, sequences
+        engine.stock_market,
+        engine.stock_market_updater,
+        detectors,
+        sequences,
+        engine.date,
     )
     new_engine = new_engine.update(engine.date)
     return new_engine
