@@ -2,8 +2,8 @@ import uuid
 
 from stock_market.core.ticker import Ticker
 
-from stock_market_engine.common import get_engine, store_engine, get_redis
 import stock_market_engine.engine as eng
+from stock_market_engine.common import get_engine, get_redis, store_engine
 
 
 def register_stock_market_api(app):

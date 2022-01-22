@@ -1,10 +1,10 @@
 import datetime as dt
-from fakeredis.aioredis import FakeRedis
-from fastapi.testclient import TestClient
-from http import HTTPStatus
 import json
 import unittest
+from http import HTTPStatus
 
+from fakeredis.aioredis import FakeRedis
+from fastapi.testclient import TestClient
 from stock_market.core import OHLC
 
 from stock_market_engine.main import app

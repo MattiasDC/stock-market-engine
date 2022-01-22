@@ -1,17 +1,17 @@
-from fastapi import Response
-from http import HTTPStatus
 import json
 import uuid
+from http import HTTPStatus
 
-from stock_market_engine.common import get_engine, store_engine, get_redis
+from fastapi import Response
+from stock_market.common.factory import Factory
+from stock_market.ext.signal import register_signal_detector_factories
+
 import stock_market_engine.engine as eng
 from stock_market_engine.api.models import (
     SignalDetectorModel,
     SignalDetectorWithNameModel,
 )
-
-from stock_market.common.factory import Factory
-from stock_market.ext.signal import register_signal_detector_factories
+from stock_market_engine.common import get_engine, get_redis, store_engine
 
 
 def register_signal_api(app):

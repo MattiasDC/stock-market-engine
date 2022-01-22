@@ -1,5 +1,4 @@
 from aioredis import Redis, from_url
-
 from utils.logging import get_logger
 
 from .config import Settings

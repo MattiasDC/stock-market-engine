@@ -1,26 +1,27 @@
 import datetime
 import json
-import pandas as pd
 import unittest
 
-from stock_market_engine.engine import (
-    Engine,
-    add_ticker,
-    remove_ticker,
-    add_signal_detector,
-    remove_signal_detector,
-)
+import pandas as pd
 from stock_market.common.factory import Factory
 from stock_market.core import (
-    add_signal,
     OHLC,
-    TickerOHLC,
-    Ticker,
+    Sentiment,
     Signal,
     SignalDetector,
     StockMarket,
     StockUpdater,
-    Sentiment,
+    Ticker,
+    TickerOHLC,
+    add_signal,
+)
+
+from stock_market_engine.engine import (
+    Engine,
+    add_signal_detector,
+    add_ticker,
+    remove_signal_detector,
+    remove_ticker,
 )
 
 

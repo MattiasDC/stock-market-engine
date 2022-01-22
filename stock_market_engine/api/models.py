@@ -1,10 +1,9 @@
 import datetime
 import json
-from pydantic import BaseModel, Json, constr
 from typing import List
 
-from stock_market.core import StockMarket
-from stock_market.core import Ticker
+from pydantic import BaseModel, Json, constr
+from stock_market.core import StockMarket, Ticker
 
 from stock_market_engine.config import get_settings
 from stock_market_engine.engine import Engine
