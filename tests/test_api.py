@@ -86,7 +86,7 @@ class TestApi(unittest.TestCase):
 
         response = client.get("/getsupportedsignaldetectors")
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(len(response.json()), 5)
+        self.assertEqual(len(response.json()), 6)
 
         signal_detector = "Monthly"
         detector_id = 1

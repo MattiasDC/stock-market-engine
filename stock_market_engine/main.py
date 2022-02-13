@@ -3,10 +3,12 @@ import uuid
 
 from fastapi import FastAPI
 
-from .api.indicator import register_indicator_api
-from .api.models import EngineModel
-from .api.signal import register_signal_api
-from .api.stock_market import register_stock_market_api
+from .api import (
+    EngineModel,
+    register_indicator_api,
+    register_signal_api,
+    register_stock_market_api,
+)
 from .common import (
     get_engine,
     get_redis,
@@ -45,6 +47,6 @@ async def update_engine(engine_id: uuid.UUID, date: datetime.date):
     return random_id
 
 
-register_stock_market_api(app)
-register_signal_api(app)
 register_indicator_api(app)
+register_signal_api(app)
+register_stock_market_api(app)
