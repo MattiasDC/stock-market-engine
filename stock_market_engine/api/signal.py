@@ -84,4 +84,7 @@ def register_signal_api(app):
     async def get_signals_id(engine_id: uuid.UUID):
         redis = get_redis(app)
         engine = await get_engine(engine_id, redis)
+        if engine is None:
+            return Response(status_code=HTTPStatus.NO_CONTENT.value)
+
         return engine.signals.to_json()

@@ -26,6 +26,8 @@ async def store_engine(engine, engine_id, redis):
 
 async def get_engine(engine_id, redis):
     engine_json = await redis.get(str(engine_id))
+    if engine_json is None:
+        return None
     return Engine.from_json(
         engine_json, get_stock_updater_factory(), get_signal_detector_factory()
     )
