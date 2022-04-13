@@ -1,5 +1,5 @@
 ---
-image: atlassian/default-image:2
+image: atlassian/default-image:3
 
 pipelines:
   tags:
