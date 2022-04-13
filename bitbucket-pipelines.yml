@@ -6,6 +6,7 @@ pipelines:
     v*:
       - step:
           name: 'Docker push'
+          deployment: production
           script:
             - echo $BITBUCKET_REPO_SLUG
             - echo $DOCKER_HUB_USERNAME
@@ -17,6 +18,5 @@ pipelines:
               docker build -t $BITBUCKET_REPO_SLUG:$BITBUCKET_TAG .
             - >
               docker push $BITBUCKET_REPO_SLUG:$BITBUCKET_TAG
-
 options:
   docker: true
