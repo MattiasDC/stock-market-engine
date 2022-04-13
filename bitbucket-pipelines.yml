@@ -17,5 +17,6 @@ pipelines:
               docker build -t $BITBUCKET_REPO_SLUG:$BITBUCKET_TAG .
             - >
               docker push $BITBUCKET_REPO_SLUG:$BITBUCKET_TAG
+
 options:
   docker: true
