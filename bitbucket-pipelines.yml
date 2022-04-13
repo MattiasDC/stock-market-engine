@@ -8,6 +8,7 @@ pipelines:
           name: 'Docker push'
           script:
             - echo $BITBUCKET_REPO_SLUG
+            - echo $DOCKER_HUB_USERNAME
             - >
               docker login
                 -u $DOCKER_HUB_USERNAME
