@@ -10,15 +10,11 @@ pipelines:
             - echo $BITBUCKET_REPO_SLUG
             - >
               docker login
-                -u $TREESCALE_USERNAME
-                -p $TREESCALE_PASSWORD repo.treescale.com
+                -u $DOCKER_HUB_USERNAME
+                -p $DOCKER_HUB_PASSWORD
             - >
-              docker build
-                -t repo.treescale.com/$TREESCALE_USERNAME/
-                $BITBUCKET_REPO_SLUG:$BITBUCKET_TAG .
+              docker build -t $BITBUCKET_REPO_SLUG:$BITBUCKET_TAG .
             - >
-              docker push
-                repo.treescale.com/$TREESCALE_USERNAME/
-                $BITBUCKET_REPO_SLUG:$BITBUCKET_TAG
+              docker push $BITBUCKET_REPO_SLUG:$BITBUCKET_TAG
 options:
   docker: true
