@@ -10,14 +10,8 @@ pipelines:
           script:
             - echo $BITBUCKET_REPO_SLUG
             - echo ${DOCKER_HUB_USERNAME}
-            - >
-              docker login
-                -u ${DOCKER_HUB_USERNAME}
-                -p ${DOCKER_HUB_PASSWORD}
-                docker.io
-            - >
-              docker build -t ${DOCKER_HUB_USERNAME}/$BITBUCKET_REPO_SLUG:$BITBUCKET_TAG .
-            - >
-              docker push ${DOCKER_HUB_USERNAME}/$BITBUCKET_REPO_SLUG:$BITBUCKET_TAG
+            - echo ${DOCKERHUB_PASSWORD} | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
+            - docker build -t ${DOCKERHUB_USERNAME}/$BITBUCKET_REPO_SLUG:$BITBUCKET_TAG .
+            - docker push ${DOCKERHUB_USERNAME}/$BITBUCKET_REPO_SLUG:$BITBUCKET_TAG
 options:
   docker: true
