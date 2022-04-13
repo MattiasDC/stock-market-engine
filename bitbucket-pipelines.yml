@@ -10,7 +10,7 @@ pipelines:
           script:
             - echo $BITBUCKET_REPO_SLUG
             - echo "$DOCKERHUB_USERNAME"
-            - echo ${DOCKERHUB_PASSWORD} | docker login --password-stdin --username "${DOCKERHUB_USERNAME}" docker.io
+            - echo ${DOCKERHUB_PASSWORD} | docker login --password-stdin --username xelicon docker.io
             - docker build -t ${DOCKERHUB_USERNAME}/$BITBUCKET_REPO_SLUG:$BITBUCKET_TAG .
             - docker push ${DOCKERHUB_USERNAME}/$BITBUCKET_REPO_SLUG:$BITBUCKET_TAG
 options:
