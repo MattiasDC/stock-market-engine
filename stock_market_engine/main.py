@@ -19,7 +19,7 @@ from .common import (
 )
 from .redis import init_redis_pool
 
-app = FastAPI()
+app = FastAPI(title="Stock Market Engine")
 
 
 @app.on_event("startup")
