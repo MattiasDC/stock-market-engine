@@ -2,7 +2,7 @@ import datetime
 import uuid
 from http import HTTPStatus
 
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, HTTPException, Response
 
 from .api import (
     EngineModel,
@@ -24,7 +24,7 @@ app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
-    app.state.redis = await init_redis_pool()
+    app.state.redis = init_redis_pool()
 
 
 @app.post("/create")
@@ -32,6 +32,11 @@ async def create_engine(engine_config: EngineModel):
     engine = engine_config.create(
         get_stock_updater_factory(), get_signal_detector_factory()
     )
+    if engine is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail="Incorrect engine configuration!"
+        )
+
     random_id = str(uuid.uuid4())
 
     await store_engine(engine, random_id, get_redis(app))

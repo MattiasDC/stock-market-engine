@@ -7,8 +7,8 @@ logger = get_logger(__name__)
 global_settings = Settings()
 
 
-async def init_redis_pool() -> Redis:
-    redis = await from_url(
+def init_redis_pool() -> Redis:
+    redis = from_url(
         global_settings.redis_url,
         encoding="utf-8",
         db=global_settings.redis_db,
