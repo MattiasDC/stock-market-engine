@@ -23,8 +23,10 @@ class Engine:
             ]
         self.__date = stock_market.date if date is None else date
 
-    def update(self, date):
-        new_stock_market = self.stock_market_updater.update(date, self.stock_market)
+    async def update(self, date):
+        new_stock_market = await self.stock_market_updater.update(
+            date, self.stock_market
+        )
         signal_sequences = []
 
         for detector, signal_sequence in zip(
@@ -112,7 +114,7 @@ class Engine:
         return engine
 
 
-def add_ticker(engine, ticker):
+async def add_ticker(engine, ticker):
     new_engine = Engine(
         engine.stock_market.add_ticker(ticker),
         engine.stock_market_updater,
@@ -120,11 +122,11 @@ def add_ticker(engine, ticker):
         engine.signal_sequences,
         engine.date,
     )
-    new_engine = new_engine.update(engine.date)
+    new_engine = await new_engine.update(engine.date)
     return new_engine
 
 
-def remove_ticker(engine, ticker):
+async def remove_ticker(engine, ticker):
     stock_market = engine.stock_market.remove_ticker(ticker)
     new_engine = Engine(
         stock_market,
@@ -137,11 +139,11 @@ def remove_ticker(engine, ticker):
         ],
         engine.date,
     )
-    new_engine = new_engine.update(engine.date)
+    new_engine = await new_engine.update(engine.date)
     return new_engine
 
 
-def add_signal_detector(engine, detector):
+async def add_signal_detector(engine, detector):
     assert detector.is_valid(engine.stock_market), (detector, engine.stock_market)
     if detector in engine.signal_detectors:
         return None
@@ -155,11 +157,11 @@ def add_signal_detector(engine, detector):
         engine.signal_sequences + [SignalSequence()],
         engine.date,
     )
-    new_engine = new_engine.update(engine.date)
+    new_engine = await new_engine.update(engine.date)
     return new_engine
 
 
-def remove_signal_detector(engine, detector_id):
+async def remove_signal_detector(engine, detector_id):
     ids = [d.id for d in engine.signal_detectors]
     if detector_id not in ids:
         return None
@@ -175,5 +177,5 @@ def remove_signal_detector(engine, detector_id):
         sequences,
         engine.date,
     )
-    new_engine = new_engine.update(engine.date)
+    new_engine = await new_engine.update(engine.date)
     return new_engine

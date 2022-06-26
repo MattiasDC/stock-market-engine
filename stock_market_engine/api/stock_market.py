@@ -34,6 +34,7 @@ def register_stock_market_api(app):
     async def get_ticker_data_id(engine_id: uuid.UUID, ticker_id: str):
         redis = get_redis(app)
         engine = await get_engine(engine_id, redis)
+
         if not engine:
             return Response(status_code=HTTPStatus.NO_CONTENT.value)
         ohlc = engine.stock_market.ohlc(Ticker(ticker_id))
@@ -59,7 +60,7 @@ def register_stock_market_api(app):
         if ticker in engine.stock_market.tickers:
             return engine_id
 
-        engine = eng.add_ticker(engine, ticker)
+        engine = await eng.add_ticker(engine, ticker)
         new_engine_id = str(uuid.uuid4())
         await store_engine(engine, new_engine_id, redis)
         return new_engine_id
@@ -74,7 +75,7 @@ def register_stock_market_api(app):
         if ticker not in engine.stock_market.tickers:
             return engine_id
 
-        engine = eng.remove_ticker(engine, ticker)
+        engine = await eng.remove_ticker(engine, ticker)
         new_engine_id = str(uuid.uuid4())
         await store_engine(engine, new_engine_id, redis)
         return new_engine_id

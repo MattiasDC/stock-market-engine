@@ -1,8 +1,8 @@
 import datetime
 import json
-import unittest
 
 import pandas as pd
+import pytest
 from stock_market.common.factory import Factory
 from stock_market.core import (
     OHLC,
@@ -29,7 +29,7 @@ class DummyStockMarketUpdater(StockUpdater):
     def __init__(self):
         super().__init__("DummyUpdater")
 
-    def update(self, date, stock_market):
+    async def update(self, date, stock_market):
         ohlc = OHLC(
             pd.Series([date]),
             pd.Series([1]),
@@ -87,68 +87,82 @@ class DummyMonthlySignalDetector(SignalDetector):
         return "DummyDetector"
 
 
-class TestEngine(unittest.TestCase):
-    def setUp(self):
-        self.spy = Ticker("SPY")
-        self.date = datetime.date(2000, 2, 2)
-        self.stock_market = StockMarket(self.date, [self.spy])
-        self.stock_updater = DummyStockMarketUpdater()
-        self.engine = Engine(
-            self.stock_market, self.stock_updater, [DummyMonthlySignalDetector()]
-        )
-
-    def test_update(self):
-        date = datetime.date(2000, 5, 1)
-        self.engine = self.engine.update(date)
-        self.assertEqual(date, self.engine.stock_market.date)
-        self.assertEqual(3, len(self.engine.signals.signals))
-        last_spy_time_value = self.engine.stock_market.ohlc(
-            self.spy
-        ).close.time_values.iloc[-1]
-        self.assertEqual(date, last_spy_time_value.date)
-        self.assertEqual(4, last_spy_time_value.value)
-
-    def test_json(self):
-        factory = Factory()
-        factory.register(
-            "DummyDetector",
-            lambda _: DummyMonthlySignalDetector(),
-            DummyMonthlySignalDetector.json_schema(),
-        )
-        factory.register(
-            "DummyUpdater",
-            lambda _: DummyStockMarketUpdater(),
-            DummyStockMarketUpdater.json_schema(),
-        )
-        date = datetime.date(2000, 5, 1)
-        self.engine.update(date)
-        from_json = Engine.from_json(self.engine.to_json(), factory, factory)
-        self.assertEqual(self.engine.stock_market, from_json.stock_market)
-        self.assertEqual(self.engine.signals, from_json.signals)
-        self.assertEqual(self.engine.signal_detectors, from_json.signal_detectors)
-
-    def test_add_ticker(self):
-        QQQ = Ticker("QQQ")
-        engine = add_ticker(self.engine, QQQ)
-        self.assertTrue(QQQ in engine.stock_market.tickers)
-
-    def test_remove_ticker(self):
-        engine = remove_ticker(self.engine, self.spy)
-        self.assertFalse(self.spy in engine.stock_market.tickers)
-
-    def test_add_signal_detector(self):
-        detector = DummyMonthlySignalDetector()
-        engine = Engine(self.stock_market, self.stock_updater, [])
-        engine = add_signal_detector(engine, detector)
-        self.assertTrue(detector in engine.signal_detectors)
-
-    def test_remove_signal_detector(self):
-        detector = DummyMonthlySignalDetector()
-        engine = Engine(self.stock_market, self.stock_updater, [])
-        engine = add_signal_detector(engine, detector)
-        engine = remove_signal_detector(engine, detector.id)
-        self.assertFalse(detector in engine.signal_detectors)
+@pytest.fixture
+def spy():
+    return Ticker("SPY")
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.fixture
+def date():
+    return datetime.date(2000, 2, 2)
+
+
+@pytest.fixture
+def stock_market(date, spy):
+    return StockMarket(date, [spy])
+
+
+@pytest.fixture
+def stock_updater():
+    return DummyStockMarketUpdater()
+
+
+@pytest.fixture
+def engine(stock_market, stock_updater):
+    return Engine(stock_market, stock_updater, [DummyMonthlySignalDetector()])
+
+
+async def test_update(engine, spy):
+    date = datetime.date(2000, 5, 1)
+    engine = await engine.update(date)
+    assert date == engine.stock_market.date
+    assert 3 == len(engine.signals.signals)
+    last_spy_time_value = engine.stock_market.ohlc(spy).close.time_values.iloc[-1]
+    assert date == last_spy_time_value.date
+    assert 4 == last_spy_time_value.value
+
+
+async def test_json(engine):
+    factory = Factory()
+    factory.register(
+        "DummyDetector",
+        lambda _: DummyMonthlySignalDetector(),
+        DummyMonthlySignalDetector.json_schema(),
+    )
+    factory.register(
+        "DummyUpdater",
+        lambda _: DummyStockMarketUpdater(),
+        DummyStockMarketUpdater.json_schema(),
+    )
+    date = datetime.date(2000, 5, 1)
+    engine = await engine.update(date)
+    from_json = Engine.from_json(engine.to_json(), factory, factory)
+    assert engine.stock_market == from_json.stock_market
+    assert engine.signals == from_json.signals
+    assert engine.signal_detectors == from_json.signal_detectors
+
+
+async def test_add_ticker(engine):
+    QQQ = Ticker("QQQ")
+    engine = await add_ticker(engine, QQQ)
+    assert QQQ in engine.stock_market.tickers
+
+
+async def test_remove_ticker(engine, spy):
+    engine = await remove_ticker(engine, spy)
+    assert spy not in engine.stock_market.tickers
+
+
+async def test_add_signal_detector(stock_market, stock_updater):
+    detector = DummyMonthlySignalDetector()
+    engine = Engine(stock_market, stock_updater, [])
+    engine = await add_signal_detector(engine, detector)
+    assert detector in engine.signal_detectors
+
+
+async def test_remove_signal_detector(stock_market, stock_updater):
+    detector = DummyMonthlySignalDetector()
+    engine = Engine(stock_market, stock_updater, [])
+    engine = await add_signal_detector(engine, detector)
+    engine = await remove_signal_detector(engine, detector.id)
+    assert detector not in engine.signal_detectors

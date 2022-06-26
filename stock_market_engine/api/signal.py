@@ -52,7 +52,7 @@ def register_signal_api(app):
         if engine is None:
             return engine_id
 
-        engine = eng.add_signal_detector(
+        engine = await eng.add_signal_detector(
             engine,
             factory.create(
                 signal_detector.static_name, json.dumps(signal_detector.config)
@@ -72,7 +72,7 @@ def register_signal_api(app):
         if engine is None:
             return engine_id
 
-        engine = eng.remove_signal_detector(engine, detector_id)
+        engine = await eng.remove_signal_detector(engine, detector_id)
         if engine is None:
             return engine_id
 

@@ -48,7 +48,7 @@ async def update_engine(engine_id: uuid.UUID, date: datetime.date):
     engine = await get_engine(engine_id, get_redis(app))
     if not engine:
         return Response(status_code=HTTPStatus.NO_CONTENT.value)
-    new_engine = engine.update(date)
+    new_engine = await engine.update(date)
     random_id = str(uuid.uuid4())
     await store_engine(new_engine, random_id, get_redis(app))
     return random_id
