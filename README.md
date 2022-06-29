@@ -1,6 +1,6 @@
 # stock-market-engine
 
-stock-market-engine is a Python microservice application that serves a REST API to create/query/update stock market information.
+stock-market-engine is a Python microservice application that serves a REST API to create/query/update a virtual stock market in time.
 It's build on top of the [stock-market-lib](https://bitbucket.org/MattiasDC/stock-market-lib.git) library.
 
 ## Installation
