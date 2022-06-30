@@ -1,6 +1,6 @@
 from stock_market.common.factory import Factory
+from stock_market.ext.fetcher import register_stock_updater_factories
 from stock_market.ext.signal import register_signal_detector_factories
-from stock_market.ext.updater import register_stock_updater_factories
 
 from .config import get_settings
 from .engine import Engine

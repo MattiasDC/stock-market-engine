@@ -6,13 +6,13 @@ import pytest
 from stock_market.common.factory import Factory
 from stock_market.core import (
     OHLC,
+    OHLCFetcher,
     Sentiment,
     Signal,
     SignalDetector,
     StockMarket,
     StockUpdater,
     Ticker,
-    TickerOHLC,
     add_signal,
 )
 
@@ -25,28 +25,32 @@ from stock_market_engine.engine import (
 )
 
 
-class DummyStockMarketUpdater(StockUpdater):
+class DummyFetcher(OHLCFetcher):
     def __init__(self):
-        super().__init__("DummyUpdater")
+        super().__init__("dummy")
 
-    async def update(self, date, stock_market):
-        ohlc = OHLC(
-            pd.Series([date]),
-            pd.Series([1]),
-            pd.Series([2]),
-            pd.Series([3]),
-            pd.Series([4]),
-        )
-        if Ticker("SPY") in stock_market.tickers:
-            stock_market = stock_market.update_ticker(TickerOHLC(Ticker("SPY"), ohlc))
-        return stock_market
+    async def fetch_ohlc(self, requests):
+        if not requests:
+            return []
+        return [
+            (
+                Ticker("SPY"),
+                OHLC(
+                    pd.Series([requests[0][1]]),
+                    pd.Series([1]),
+                    pd.Series([2]),
+                    pd.Series([3]),
+                    pd.Series([4]),
+                ),
+            )
+        ]
 
     def to_json(self):
         return json.dumps({})
 
     @staticmethod
     def from_json(json_str):
-        return DummyStockMarketUpdater()
+        return DummyFetcher()
 
     @staticmethod
     def json_schema():
@@ -104,7 +108,7 @@ def stock_market(date, spy):
 
 @pytest.fixture
 def stock_updater():
-    return DummyStockMarketUpdater()
+    return StockUpdater(DummyFetcher())
 
 
 @pytest.fixture
@@ -130,9 +134,9 @@ async def test_json(engine):
         DummyMonthlySignalDetector.json_schema(),
     )
     factory.register(
-        "DummyUpdater",
-        lambda _: DummyStockMarketUpdater(),
-        DummyStockMarketUpdater.json_schema(),
+        "dummy",
+        lambda _: DummyFetcher(),
+        DummyFetcher.json_schema(),
     )
     date = datetime.date(2000, 5, 1)
     engine = await engine.update(date)

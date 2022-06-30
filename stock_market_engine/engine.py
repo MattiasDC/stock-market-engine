@@ -17,6 +17,7 @@ class Engine:
         self.__stock_market_updater = stock_market_updater
         self.__signal_detectors = signal_detectors
         self.__signal_sequences = signal_sequences
+
         if signal_sequences is None:
             self.__signal_sequences = [
                 SignalSequence() for _ in range(len(self.__signal_detectors))
@@ -80,6 +81,7 @@ class Engine:
             {"name": detector.NAME(), "config": detector.to_json()}
             for detector in self.signal_detectors
         ]
+
         return json.dumps(
             {
                 "stock_market": self.stock_market.to_json(),
@@ -122,6 +124,7 @@ async def add_ticker(engine, ticker):
         engine.signal_sequences,
         engine.date,
     )
+
     new_engine = await new_engine.update(engine.date)
     return new_engine
 
@@ -149,6 +152,7 @@ async def add_signal_detector(engine, detector):
         return None
     if detector.id in [d.id for d in engine.signal_detectors]:
         return None
+
     detectors = engine.signal_detectors + [detector]
     new_engine = Engine(
         engine.stock_market,
