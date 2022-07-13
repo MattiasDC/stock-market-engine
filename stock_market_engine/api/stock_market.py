@@ -31,7 +31,7 @@ def register_stock_market_api(app):
         return [ticker.symbol for ticker in engine.stock_market.tickers]
 
     @app.get("/ticker/{engine_id}/{ticker_id}")
-    async def get_ticker_data_id(engine_id: uuid.UUID, ticker_id: str):
+    async def get_ticker_ohlc(engine_id: uuid.UUID, ticker_id: str):
         redis = get_redis(app)
         engine = await get_engine(engine_id, redis)
 
@@ -43,7 +43,7 @@ def register_stock_market_api(app):
         return ohlc.to_json()
 
     @app.get("/signals/{engine_id}")
-    async def get_signals_id(engine_id: uuid.UUID):
+    async def get_signals(engine_id: uuid.UUID):
         redis = get_redis(app)
         engine = await get_engine(engine_id, redis)
         if not engine:
