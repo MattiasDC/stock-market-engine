@@ -4,6 +4,7 @@ import uuid
 from http import HTTPStatus
 
 from fastapi import FastAPI, HTTPException, Response
+from utils.logging import get_logger
 
 from .api import (
     EngineModel,
@@ -19,6 +20,8 @@ from .common import (
     store_engine,
 )
 from .redis import init_redis_pool
+
+logger = get_logger(__name__)
 
 app = FastAPI(title="Stock Market Engine")
 
@@ -43,6 +46,9 @@ async def create_engine(engine_config: EngineModel):
     redis = get_redis(app)
     engine_id = await get_cached_engine_id(engine_config, redis)
     if engine_id is not None:
+        logger.debug(
+            f"Create engine cache hit for '{engine_id}' with config '{engine_config}'"
+        )
         return engine_id
 
     engine = engine_config.create(
