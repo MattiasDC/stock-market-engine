@@ -61,8 +61,7 @@ def register_stock_market_api(app):
             return engine_id
 
         engine = await eng.add_ticker(engine, ticker)
-        new_engine_id = str(uuid.uuid4())
-        await store_engine(engine, new_engine_id, redis)
+        new_engine_id = await store_engine(engine, redis)
         return new_engine_id
 
     @app.post("/removeticker/{engine_id}/{ticker_id}")
@@ -76,6 +75,5 @@ def register_stock_market_api(app):
             return engine_id
 
         engine = await eng.remove_ticker(engine, ticker)
-        new_engine_id = str(uuid.uuid4())
-        await store_engine(engine, new_engine_id, redis)
+        new_engine_id = await store_engine(engine, redis)
         return new_engine_id

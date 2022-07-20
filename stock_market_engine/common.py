@@ -1,9 +1,15 @@
+import hashlib
+import uuid
+
 from stock_market.common.factory import Factory
 from stock_market.ext.fetcher import register_stock_updater_factories
 from stock_market.ext.signal import register_signal_detector_factories
+from utils.logging import get_logger
 
 from .config import get_settings
 from .engine import Engine
+
+logger = get_logger(__name__)
 
 
 def get_redis(app):
@@ -18,10 +24,24 @@ def get_stock_updater_factory():
     return register_stock_updater_factories(Factory())
 
 
-async def store_engine(engine, engine_id, redis):
+def get_hash(engine):
+    json_config = engine.to_json()
+    return hashlib.md5(json_config.encode("utf-8")).hexdigest()
+
+
+async def store_engine(engine, redis):
+    engine_hash = get_hash(engine)
+    engine_id = await redis.get(engine_hash)
+    if engine_id is not None:
+        logger.debug(f"Cache hit for engine modification! id: '{engine_id}'")
+        return engine_id
+
+    random_id = str(uuid.uuid4())
     await redis.set(
-        engine_id, engine.to_json(), get_settings().redis_engine_expiration_time
+        random_id, engine.to_json(), get_settings().redis_engine_expiration_time
     )
+    await redis.set(engine_hash, random_id)
+    return random_id
 
 
 async def get_engine(engine_id, redis):
