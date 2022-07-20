@@ -1,4 +1,5 @@
 import hashlib
+import json
 import uuid
 
 from stock_market.common.factory import Factory
@@ -25,8 +26,14 @@ def get_stock_updater_factory():
 
 
 def get_hash(engine):
-    json_config = engine.to_json()
-    return hashlib.md5(json_config.encode("utf-8")).hexdigest()
+    hash_components = {}
+    hash_components["start_date"] = engine.stock_market.start_date.isoformat()
+    hash_components["tickers"] = [t.to_json() for t in engine.stock_market.tickers]
+    hash_components["signal_detectors"] = [
+        sd.to_json() for sd in engine.signal_detectors
+    ]
+    hash_components["end_date"] = engine.date.isoformat()
+    return hashlib.md5(json.dumps(hash_components).encode("utf-8")).hexdigest()
 
 
 async def store_engine(engine, redis):
