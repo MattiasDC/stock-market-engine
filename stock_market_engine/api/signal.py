@@ -63,7 +63,7 @@ def register_signal_api(app):
             return engine_id
 
         new_engine_id = await store_engine(engine, redis)
-        return new_engine_id
+        return str(new_engine_id)
 
     @app.post("/removesignaldetector/{engine_id}/{detector_id}")
     async def remove_signal_detector(engine_id: uuid.UUID, detector_id: int):
@@ -77,7 +77,7 @@ def register_signal_api(app):
             return engine_id
 
         new_engine_id = await store_engine(engine, redis)
-        return new_engine_id
+        return str(new_engine_id)
 
     @app.get("/signals/{engine_id}")
     async def get_signals_id(engine_id: uuid.UUID):

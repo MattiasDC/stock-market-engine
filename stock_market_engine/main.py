@@ -33,7 +33,7 @@ async def create_engine(engine_config: EngineModel):
         )
 
     engine_id = await store_engine(engine, get_redis(app))
-    return engine_id
+    return str(engine_id)
 
 
 @app.post("/update/{engine_id}")
@@ -43,7 +43,7 @@ async def update_engine(engine_id: uuid.UUID, date: datetime.date):
         return Response(status_code=HTTPStatus.NO_CONTENT.value)
     new_engine = await engine.update(date)
     engine_id = await store_engine(new_engine, get_redis(app))
-    return engine_id
+    return str(engine_id)
 
 
 register_indicator_api(app)
