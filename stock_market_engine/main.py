@@ -4,19 +4,15 @@ from http import HTTPStatus
 
 from fastapi import FastAPI, HTTPException, Response
 
+from stock_market_engine.engine_store import get_engine, store_engine
+
 from .api import (
     EngineModel,
     register_indicator_api,
     register_signal_api,
     register_stock_market_api,
 )
-from .common import (
-    get_engine,
-    get_redis,
-    get_signal_detector_factory,
-    get_stock_updater_factory,
-    store_engine,
-)
+from .common import get_redis, get_signal_detector_factory, get_stock_updater_factory
 from .redis import init_redis_pool
 
 app = FastAPI(title="Stock Market Engine")

@@ -11,7 +11,8 @@ from stock_market_engine.api.models import (
     SignalDetectorModel,
     SignalDetectorWithNameModel,
 )
-from stock_market_engine.common import get_engine, get_redis, store_engine
+from stock_market_engine.common import get_redis
+from stock_market_engine.engine_store import get_engine, store_engine
 
 
 def register_signal_api(app):

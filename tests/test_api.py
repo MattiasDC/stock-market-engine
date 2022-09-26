@@ -28,22 +28,32 @@ def get_date(client, engine_id):
     return response.text.strip('"')
 
 
+def get_engine_id(response):
+    return response.text.strip('"')
+
+
 def test_api(client):
     spy = "SPY"
 
-    response = client.post(
-        "/create",
-        json={
-            "stock_market": {
-                "start_date": "2021-01-01",
-                "tickers": [{"symbol": spy}],
-            },
-            "signal_detectors": [],
+    initial_engine_config = {
+        "stock_market": {
+            "start_date": "2021-01-01",
+            "tickers": [{"symbol": spy}],
         },
-    )
+        "signal_detectors": [],
+    }
+
+    response = client.post("/create", json=initial_engine_config)
+
     assert response.status_code == HTTPStatus.OK
-    engine_id = response.text.strip('"')
+    engine_id = get_engine_id(response)
     assert engine_id is not None
+
+    # Test whether engines are correctly hashed.
+    # Same config, does not result in new engine id
+    response = client.post("/create", json=engine_id)
+    assert response.status_code == HTTPStatus.OK
+    assert get_engine_id(response) == engine_id
 
     assert get_date(client, engine_id) == "2021-01-01"
 
@@ -54,7 +64,7 @@ def test_api(client):
 
     response = client.get(f"/getstartdate/{engine_id}")
     assert response.status_code == HTTPStatus.OK
-    assert response.text.strip('"') == "2021-01-01"
+    assert get_engine_id(response) == "2021-01-01"
 
     response = client.get(f"/ticker/{engine_id}/{spy}")
     assert response.status_code == HTTPStatus.OK
@@ -72,7 +82,7 @@ def test_api(client):
     qqq = "QQQ"
     response = client.post(f"/addticker/{engine_id}/{qqq}")
     assert response.status_code == HTTPStatus.OK
-    new_engine_id = response.text.strip('"')
+    new_engine_id = get_engine_id(response)
 
     response = client.get(f"/tickers/{new_engine_id}")
     assert response.status_code == HTTPStatus.OK
@@ -80,7 +90,7 @@ def test_api(client):
 
     response = client.post(f"/removeticker/{new_engine_id}/{spy}")
     assert response.status_code == HTTPStatus.OK
-    new_engine_id = response.text.strip('"')
+    new_engine_id = get_engine_id(response)
 
     response = client.get(f"/tickers/{new_engine_id}")
     assert response.status_code == HTTPStatus.OK
@@ -97,7 +107,7 @@ def test_api(client):
         json={"static_name": signal_detector, "config": json.dumps(detector_id)},
     )
     assert response.status_code == HTTPStatus.OK
-    new_engine_id = response.text.strip('"')
+    new_engine_id = get_engine_id(response)
 
     response = client.get(f"/signaldetectors/{new_engine_id}")
     assert response.status_code == HTTPStatus.OK
@@ -105,7 +115,7 @@ def test_api(client):
 
     response = client.post(f"/removesignaldetector/{new_engine_id}/{detector_id}")
     assert response.status_code == HTTPStatus.OK
-    new_engine_id = response.text.strip('"')
+    new_engine_id = get_engine_id(response)
 
     response = client.get(f"/signaldetectors/{new_engine_id}")
     assert response.status_code == HTTPStatus.OK
