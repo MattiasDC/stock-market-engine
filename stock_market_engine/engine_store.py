@@ -33,7 +33,7 @@ async def store_engine(engine, redis):
 
     random_id = uuid.uuid4()
     await redis.set(
-        random_id, engine.to_json(), get_settings().redis_engine_expiration_time
+        str(random_id), engine.to_json(), get_settings().redis_engine_expiration_time
     )
     await redis.set(engine_hash, str(random_id))
     return random_id
