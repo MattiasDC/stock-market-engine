@@ -28,7 +28,6 @@ async def store_engine(engine, redis):
     engine_hash = __get_hash(engine)
     engine_id = await redis.get(engine_hash)
     if engine_id is not None:
-        engine_id = engine_id.decode("UTF-8")
         stored_engine = await get_engine(engine_id, redis)
         if stored_engine is not None:
             logger.debug(f"Cache hit for engine modification! id: '{engine_id}'")

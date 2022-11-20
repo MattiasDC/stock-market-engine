@@ -12,7 +12,7 @@ from stock_market_engine.main import app
 
 def get_client_impl():
     with TestClient(app) as client:
-        app.state.redis = FakeRedis()
+        app.state.redis = FakeRedis(decode_responses=True, encoding="UTF-8")
         while True:
             yield client
 
