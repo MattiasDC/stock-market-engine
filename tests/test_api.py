@@ -51,7 +51,7 @@ def test_api(client):
 
     # Test whether engines are correctly hashed.
     # Same config, does not result in new engine id
-    response = client.post("/create", json=engine_id)
+    response = client.post("/create", json=initial_engine_config)
     assert response.status_code == HTTPStatus.OK
     assert get_engine_id(response) == engine_id
 
@@ -86,7 +86,7 @@ def test_api(client):
 
     response = client.get(f"/tickers/{new_engine_id}")
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == [spy, qqq]
+    assert set(response.json()) == set([spy, qqq])
 
     response = client.post(f"/removeticker/{new_engine_id}/{spy}")
     assert response.status_code == HTTPStatus.OK
